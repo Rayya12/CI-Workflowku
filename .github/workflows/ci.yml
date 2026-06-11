@@ -37,12 +37,10 @@ jobs:
             -P max_depth=10
  
       # 5. Upload mlruns (artefak) ke GitHub Actions Artifacts
-      - name: Upload MLflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-artifacts-${{ github.run_id }}
-          path: MLProject/mlruns/
-          retention-days: 30
+      - name: Run MLflow Project
+        run: |
+          cd MLProject 
+          mlflow run . --env-manager=local -P n_estimators=100 -P max_depth=10 
  
       # 6. Commit mlruns ke repo (opsional — aktifkan jika ingin tersimpan di repo)
       # - name: Commit mlruns to repo

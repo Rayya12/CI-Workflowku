@@ -28,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 input_example = X_train[:5]
 
 # ─── Training dengan Autolog ──────────────────────────────────────────────────
-with mlflow.start_run(run_name="rf_baseline_ci"):
+with mlflow.start_run():
     mlflow.autolog()
 
     model = RandomForestClassifier(
