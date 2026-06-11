@@ -1,0 +1,54 @@
+name: CI - MLflow Training
+ 
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:   # trigger manual dari GitHub UI
+ 
+jobs:
+  train:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+ 
+      # 2. Setup Python
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+ 
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install mlflow==2.12.1 scikit-learn==1.4.2 pandas==2.2.2 numpy==1.26.4
+ 
+      # 4. Jalankan MLflow Project
+      - name: Run MLflow Project
+        run: |
+          cd MLProject
+          mlflow run . \
+            --env-manager=local \
+            -P n_estimators=100 \
+            -P max_depth=10
+ 
+      # 5. Upload mlruns (artefak) ke GitHub Actions Artifacts
+      - name: Upload MLflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlflow-artifacts-${{ github.run_id }}
+          path: MLProject/mlruns/
+          retention-days: 30
+ 
+      # 6. Commit mlruns ke repo (opsional — aktifkan jika ingin tersimpan di repo)
+      # - name: Commit mlruns to repo
+      #   run: |
+      #     git config user.name  "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add MLProject/mlruns/
+      #     git diff --cached --quiet || git commit -m "ci: save mlflow artifacts [skip ci]"
+      #     git push
