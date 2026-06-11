@@ -28,23 +28,23 @@ X_train, X_test, y_train, y_test = train_test_split(
 input_example = X_train[:5]
 
 # ─── Training dengan Autolog ──────────────────────────────────────────────────
-with mlflow.start_run():
-    mlflow.autolog()
+mlflow.autolog()
 
-    model = RandomForestClassifier(
-        n_estimators=args.n_estimators,
-        max_depth=args.max_depth,
-        random_state=42
-    )
-    model.fit(X_train, y_train)
+model = RandomForestClassifier(
+    n_estimators=args.n_estimators,
+    max_depth=args.max_depth,
+    random_state=42
+)
 
-    accuracy = model.score(X_test, y_test)
-    mlflow.log_metric("test_accuracy", accuracy)
+model.fit(X_train, y_train)
 
-    mlflow.sklearn.log_model(
-        sk_model=model,
-        artifact_path="model",
-        input_example=input_example
-    )
+accuracy = model.score(X_test, y_test)
+mlflow.log_metric("test_accuracy", accuracy)
 
-    print(f"Test Accuracy: {accuracy:.4f}")
+mlflow.sklearn.log_model(
+    sk_model=model,
+    artifact_path="model",
+    input_example=input_example
+)
+
+print(f"Test Accuracy: {accuracy:.4f}")
